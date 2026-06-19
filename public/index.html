@@ -68,17 +68,12 @@ section,nav,footer{position:relative;z-index:1;}
 
 /* ── Custom cursor ─────────────────────────────────────────── */
 #cursor{
-  position:fixed;width:40px;height:40px;border:1.5px solid rgba(157,92,255,.6);
+  position:fixed;width:10px;height:10px;background:var(--purple2);
   border-radius:50%;pointer-events:none;z-index:99999;
-  transform:translate(-50%,-50%);transition:width .2s,height .2s,border-color .2s;
-  mix-blend-mode:normal;
+  transform:translate(-50%,-50%);transition:width .15s,height .15s,background .15s;
 }
-#cursor.hover{width:64px;height:64px;border-color:rgba(6,182,212,.8);background:rgba(124,58,237,.06);}
-#cursorDot{
-  position:fixed;width:5px;height:5px;background:var(--purple2);
-  border-radius:50%;pointer-events:none;z-index:99999;
-  transform:translate(-50%,-50%);transition:none;
-}
+#cursor.hover{width:18px;height:18px;background:var(--cyan);}
+#cursorDot{display:none;}
 
 /* ── Burst particles ───────────────────────────────────────── */
 @keyframes burst{
@@ -1346,10 +1341,8 @@ footer{padding:36px 0;border-top:1px solid var(--border);background:var(--bg);}
 <script>
 /* ── Custom cursor ────────────────────────────────────────── */
 (function(){
-  const c=document.getElementById('cursor'),d=document.getElementById('cursorDot');
-  let cx=0,cy=0,tx=0,ty=0;
-  document.addEventListener('mousemove',e=>{tx=e.clientX;ty=e.clientY;d.style.left=tx+'px';d.style.top=ty+'px';});
-  (function loop(){cx+=(tx-cx)*.12;cy+=(ty-cy)*.12;c.style.left=cx+'px';c.style.top=cy+'px';requestAnimationFrame(loop);})();
+  const c=document.getElementById('cursor');
+  document.addEventListener('mousemove',e=>{c.style.left=e.clientX+'px';c.style.top=e.clientY+'px';});
   document.querySelectorAll('a,button,.srv-card,.port-card,.tc').forEach(el=>{
     el.addEventListener('mouseenter',()=>c.classList.add('hover'));
     el.addEventListener('mouseleave',()=>c.classList.remove('hover'));
