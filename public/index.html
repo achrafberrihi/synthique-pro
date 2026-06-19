@@ -24,6 +24,31 @@
   --border:#18183A;--border2:#22224A;
   --radius:12px;
 }
+/* ── Light mode ────────────────────────────────────────────── */
+html.light{
+  --bg:#F5F5FF;--bg2:#EDEDFA;--bg3:#FFFFFF;--bg4:#E5E5F5;
+  --text:#0E0E1A;--text2:#4A4A6A;--text3:#9999BB;
+  --border:#D8D8EE;--border2:#C8C8E8;
+}
+html.light body{background:var(--bg);color:var(--text);}
+html.light nav.sc{background:rgba(245,245,255,.94);border-color:var(--border);}
+html.light body::before{background-image:linear-gradient(rgba(124,58,237,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(124,58,237,.025) 1px,transparent 1px);}
+html.light #cursor{border-color:rgba(124,58,237,.45);}
+html.light .moat{background:linear-gradient(135deg,rgba(245,158,11,.04),rgba(124,58,237,.04));border-color:rgba(245,158,11,.18);}
+html.light .thesis{background:linear-gradient(135deg,rgba(245,158,11,.04),rgba(124,58,237,.04));border-color:rgba(245,158,11,.18);}
+html.light .marquee-wrap::before{background:linear-gradient(90deg,var(--bg2),transparent);}
+html.light .marquee-wrap::after{background:linear-gradient(270deg,var(--bg2),transparent);}
+/* ── Mobile — hide cursor & heavy effects ──────────────────── */
+@media(pointer:coarse){
+  #cursor,#cursorDot{display:none!important;}
+  body{cursor:auto!important;}
+  .btn,.magnetic,.theme-toggle,.hamburger{cursor:pointer!important;}
+  .ff2 select{cursor:pointer!important;}
+}
+@media(max-width:600px){
+  #hero-canvas{display:none;}
+  .hero-gp,.hero-gc{filter:blur(30px);opacity:.6;}
+}
 /* ── Reset ─────────────────────────────────────────────────── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;font-size:16px;}
@@ -177,11 +202,13 @@ nav.sc{background:rgba(6,6,14,.88);backdrop-filter:blur(18px);-webkit-backdrop-f
       <a href="#process">Process</a>
       <a href="#team">Team</a>
       <a href="#investors">Investors</a>
+      <a href="#demo">Demo</a>
       <a href="#contact">Contact</a>
     </div>
     <a href="#contact" class="btn btn-p nav-cta magnetic" style="padding:9px 18px;font-size:.85rem;">
       <i class="bi bi-send"></i> Get in touch
     </a>
+    <button class="theme-toggle" id="themeToggle" title="Toggle theme"><i class="bi bi-sun-fill" id="themeIcon"></i></button>
     <button class="hamburger" id="ham" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
@@ -193,6 +220,7 @@ nav.sc{background:rgba(6,6,14,.88);backdrop-filter:blur(18px);-webkit-backdrop-f
     <a href="#process" onclick="closeMob()">Process</a>
     <a href="#team" onclick="closeMob()">Team</a>
     <a href="#investors" onclick="closeMob()">Investors</a>
+    <a href="#demo" onclick="closeMob()">Demo</a>
     <a href="#contact" onclick="closeMob()">Contact</a>
   </div>
 </nav>
@@ -799,6 +827,123 @@ nav.sc{background:rgba(6,6,14,.88);backdrop-filter:blur(18px);-webkit-backdrop-f
   </div>
 </section>
 
+<!-- ═══ INTERACTIVE DEMO ═══════════════════════════════════ -->
+<section id="demo">
+  <div class="container">
+    <div class="label">Try it live</div>
+    <h2 class="st">Interactive <span class="grad">annotation demo</span></h2>
+    <p class="ss">Experience how our specialists work — pick a task type and annotate a real example.</p>
+
+    <div class="demo-tabs">
+      <button class="dtab active" data-tab="llm"><i class="bi bi-stars"></i> LLM Evaluation</button>
+      <button class="dtab" data-tab="arabic"><i class="bi bi-translate"></i> Arabic NLP</button>
+      <button class="dtab" data-tab="adas"><i class="bi bi-car-front-fill"></i> ADAS Annotation</button>
+    </div>
+
+    <!-- ── LLM Eval Panel ── -->
+    <div class="demo-panel active" id="dp-llm">
+      <div class="demo-task-badge"><i class="bi bi-stars" style="color:var(--purple2);"></i> RLHF Preference Task · Difficulty: Medium</div>
+      <div class="demo-prompt">
+        <div class="demo-section-label">User Prompt</div>
+        <div class="demo-prompt-text">Explain the difference between overfitting and underfitting in machine learning, and how to detect each one in practice.</div>
+      </div>
+      <div class="demo-responses">
+        <div class="demo-resp" id="resp-a">
+          <div class="resp-header"><span class="resp-badge" style="background:rgba(124,58,237,.15);color:var(--purple3);">Model A</span></div>
+          <div class="resp-text">Overfitting occurs when a model learns the training data too well, capturing noise and random fluctuations. It performs excellently on training data but poorly on new data. Underfitting happens when the model is too simple — it fails to capture the underlying patterns. Detect overfitting by comparing training vs. validation loss (training much lower = overfitting). Detect underfitting when both losses remain high.</div>
+        </div>
+        <div class="demo-resp" id="resp-b">
+          <div class="resp-header"><span class="resp-badge" style="background:rgba(6,182,212,.12);color:var(--cyan2);">Model B</span></div>
+          <div class="resp-text">Overfitting = bad generalization, underfitting = bad learning. Training accuracy high but test accuracy low means overfitting. Even training accuracy low means underfitting. Use regularization for overfitting and more complex models for underfitting.</div>
+        </div>
+      </div>
+      <div class="demo-pref-block">
+        <div class="demo-section-label">Which response do you prefer?</div>
+        <div class="demo-pref-btns">
+          <button class="pref-btn" onclick="selectPref(this,'A')">A is better</button>
+          <button class="pref-btn" onclick="selectPref(this,'Tie')">Tie</button>
+          <button class="pref-btn" onclick="selectPref(this,'B')">B is better</button>
+        </div>
+      </div>
+      <div class="demo-section-label" style="margin-top:16px;">Rate overall response quality</div>
+      <div class="quality-row">
+        <span class="ql">Poor</span>
+        <input type="range" min="1" max="5" value="3" class="quality-slider" id="llmQuality" oninput="document.getElementById('llmQVal').textContent=this.value+'/5'">
+        <span class="ql" id="llmQVal">3/5</span>
+      </div>
+      <button class="demo-submit btn btn-p magnetic" onclick="submitDemo('llm')"><i class="bi bi-send-fill"></i> Submit annotation</button>
+      <div class="demo-result" id="llm-result"></div>
+    </div>
+
+    <!-- ── Arabic NLP Panel ── -->
+    <div class="demo-panel" id="dp-arabic">
+      <div class="demo-task-badge"><i class="bi bi-translate" style="color:var(--orange);"></i> Dialect Classification Task · Arabic NLP</div>
+      <div class="demo-prompt">
+        <div class="demo-section-label">Audio Transcription Sample</div>
+        <div class="waveform-wrap">
+          <div class="waveform" id="waveform"></div>
+          <button class="play-btn" id="playBtn" onclick="togglePlay()"><i class="bi bi-play-fill" id="playIcon"></i> Play sample</button>
+        </div>
+        <div class="demo-prompt-text" style="direction:rtl;font-size:1.15rem;line-height:2;font-family:Georgia,serif;margin-top:12px;">كنت كانمشي فالسوق، لقيت واحد صاحبي قال لي "لاباس؟ واش راك؟"</div>
+        <div style="font-size:.75rem;color:var(--text2);margin-top:6px;">Translation: "I was walking in the market, I met a friend who said 'How are you? How's it going?'"</div>
+      </div>
+      <div class="demo-section-label" style="margin-top:20px;">Classify this dialect:</div>
+      <div class="dialect-grid">
+        <button class="dialect-btn" onclick="selectDialect(this)">🇲🇦 Moroccan Darija</button>
+        <button class="dialect-btn" onclick="selectDialect(this)">🇩🇿 Algerian Darija</button>
+        <button class="dialect-btn" onclick="selectDialect(this)">🇹🇳 Tunisian Tounsi</button>
+        <button class="dialect-btn" onclick="selectDialect(this)">🇪🇬 Egyptian Masri</button>
+        <button class="dialect-btn" onclick="selectDialect(this)">🇸🇾 Levantine</button>
+        <button class="dialect-btn" onclick="selectDialect(this)">🇸🇦 Gulf Khaliji</button>
+      </div>
+      <div class="demo-section-label" style="margin-top:20px;">Transcription quality:</div>
+      <div class="quality-row">
+        <span class="ql">Poor</span>
+        <input type="range" min="1" max="5" value="4" class="quality-slider" id="arQuality" oninput="document.getElementById('arQVal').textContent=this.value+'/5'">
+        <span class="ql" id="arQVal">4/5</span>
+      </div>
+      <button class="demo-submit btn btn-p magnetic" onclick="submitDemo('arabic')"><i class="bi bi-send-fill"></i> Submit annotation</button>
+      <div class="demo-result" id="arabic-result"></div>
+    </div>
+
+    <!-- ── ADAS Panel ── -->
+    <div class="demo-panel" id="dp-adas">
+      <div class="demo-task-badge"><i class="bi bi-bounding-box" style="color:var(--green);"></i> Bounding Box Labeling · ADAS L4 Standard</div>
+      <div class="demo-section-label">Click each object to label it</div>
+      <div class="adas-frame" id="adasFrame">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&q=80" alt="ADAS scene" class="adas-img">
+        <div class="adas-obj unlabeled" data-label="Vehicle" style="left:8%;top:30%;width:28%;height:40%;" onclick="labelObj(this)">
+          <div class="adas-box-inner"></div><span class="adas-tag-lbl">Vehicle</span>
+        </div>
+        <div class="adas-obj unlabeled" data-label="Pedestrian" style="left:60%;top:35%;width:9%;height:38%;" onclick="labelObj(this)">
+          <div class="adas-box-inner"></div><span class="adas-tag-lbl">Pedestrian</span>
+        </div>
+        <div class="adas-obj unlabeled" data-label="Traffic Sign" style="left:79%;top:12%;width:12%;height:22%;" onclick="labelObj(this)">
+          <div class="adas-box-inner"></div><span class="adas-tag-lbl">Traffic Sign</span>
+        </div>
+        <div class="adas-obj unlabeled" data-label="Cyclist" style="left:44%;top:40%;width:10%;height:32%;" onclick="labelObj(this)">
+          <div class="adas-box-inner"></div><span class="adas-tag-lbl">Cyclist</span>
+        </div>
+      </div>
+      <div class="adas-progress">
+        <div class="adas-stat-row">
+          <div class="adas-stat-item"><span class="adas-val" id="labeled-count">0</span><span class="adas-lbl">Labeled</span></div>
+          <div class="adas-stat-item"><span class="adas-val">4</span><span class="adas-lbl">Total objects</span></div>
+          <div class="adas-stat-item"><span class="adas-val" id="adas-pct">0%</span><span class="adas-lbl">Complete</span></div>
+        </div>
+        <div class="adas-bar-wrap"><div class="adas-bar" id="adasBar"></div></div>
+      </div>
+      <button class="demo-submit btn btn-p magnetic" onclick="submitDemo('adas')"><i class="bi bi-send-fill"></i> Submit frame</button>
+      <div class="demo-result" id="adas-result"></div>
+    </div>
+
+    <div class="demo-cta rev">
+      <p>Ready to build production-grade datasets at this precision?</p>
+      <a href="#contact" class="btn btn-p magnetic"><i class="bi bi-rocket-takeoff"></i> Start a project</a>
+    </div>
+  </div>
+</section>
+
 <!-- ═══ FOOTER ════════════════════════════════════════════════ -->
 <footer>
   <div class="container ft-in">
@@ -847,7 +992,7 @@ document.getElementById('cf').addEventListener('submit',async function(e){
       txt.textContent='Send message';btn.disabled=false;
     }
   } catch {
-    ferr.textContent='Network error — please email achraf-berrihi@hotmail.com directly.';
+    ferr.textContent='Network error — please try again later.';
     ferr.style.display='block';txt.textContent='Send message';btn.disabled=false;
   }
 });
@@ -1113,6 +1258,88 @@ footer{padding:36px 0;border-top:1px solid var(--border);background:var(--bg);}
 .ft-links{display:flex;gap:18px;}
 .ft-links a{font-size:.8rem;color:var(--text2);transition:color .2s;}
 .ft-links a:hover{color:var(--purple3);}
+
+/* ── Theme toggle button ───────────────────────────────────── */
+.theme-toggle{background:none;border:1px solid var(--border2);border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:var(--text2);cursor:none;transition:border-color .2s,color .2s,background .2s;flex-shrink:0;font-size:.95rem;}
+.theme-toggle:hover{border-color:var(--purple2);color:var(--purple3);}
+
+/* ═══════════════════════════════════════════════════════════
+   INTERACTIVE DEMO
+════════════════════════════════════════════════════════════ */
+#demo{padding:100px 0;background:var(--bg);}
+.demo-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:40px 0 28px;}
+.dtab{display:inline-flex;align-items:center;gap:7px;padding:10px 20px;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--text2);font-family:'Space Grotesk',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.dtab:hover{border-color:var(--purple2);color:var(--text);}
+.dtab.active{background:linear-gradient(135deg,var(--purple),var(--purple2));color:#fff;border-color:transparent;box-shadow:0 4px 20px rgba(124,58,237,.35);}
+.demo-panel{display:none;background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:32px;animation:fadeIn .3s ease;}
+.demo-panel.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.demo-task-badge{display:inline-flex;align-items:center;gap:8px;background:var(--bg4);border:1px solid var(--border2);border-radius:100px;padding:6px 16px;font-family:'Space Mono',monospace;font-size:.72rem;color:var(--text2);margin-bottom:24px;}
+.demo-section-label{font-size:.75rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text2);font-family:'Space Mono',monospace;margin-bottom:10px;}
+.demo-prompt{background:var(--bg4);border:1px solid var(--border2);border-radius:10px;padding:20px;margin-bottom:24px;}
+.demo-prompt-text{font-size:.95rem;line-height:1.7;color:var(--text);}
+.demo-responses{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+@media(max-width:680px){.demo-responses{grid-template-columns:1fr;}}
+.demo-resp{background:var(--bg4);border:1px solid var(--border2);border-radius:10px;padding:18px;transition:border-color .2s;}
+.demo-resp.selected{border-color:var(--purple2);box-shadow:0 0 0 3px rgba(124,58,237,.12);}
+.resp-header{margin-bottom:10px;}
+.resp-badge{font-family:'Space Mono',monospace;font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:100px;}
+.resp-text{font-size:.84rem;color:var(--text2);line-height:1.65;}
+.demo-pref-block{margin-bottom:20px;}
+.demo-pref-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.pref-btn{padding:8px 18px;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--text2);font-family:'Space Grotesk',sans-serif;font-size:.85rem;cursor:pointer;transition:all .2s;}
+.pref-btn:hover{border-color:var(--purple2);color:var(--text);}
+.pref-btn.active{background:rgba(124,58,237,.15);border-color:var(--purple2);color:var(--purple3);}
+.quality-row{display:flex;align-items:center;gap:14px;margin-bottom:24px;}
+.ql{font-size:.75rem;color:var(--text2);white-space:nowrap;}
+.quality-slider{flex:1;appearance:none;height:4px;background:var(--border2);border-radius:4px;outline:none;cursor:pointer;}
+.quality-slider::-webkit-slider-thumb{appearance:none;width:18px;height:18px;border-radius:50%;background:var(--purple2);cursor:pointer;box-shadow:0 0 8px rgba(124,58,237,.4);}
+.demo-submit{margin-top:4px;padding:13px 28px;font-size:.95rem;}
+
+/* Waveform */
+.waveform-wrap{background:var(--bg);border:1px solid var(--border2);border-radius:10px;padding:16px;margin-bottom:4px;}
+.waveform{display:flex;align-items:center;gap:3px;height:48px;margin-bottom:12px;}
+.waveform .bar{flex:1;background:var(--purple2);border-radius:2px;opacity:.4;transition:height .1s;}
+.waveform.playing .bar{animation:wave .6s ease-in-out infinite alternate;}
+.waveform .bar:nth-child(odd){animation-delay:.1s;}
+.waveform .bar:nth-child(3n){animation-delay:.2s;}
+@keyframes wave{0%{opacity:.3;}100%{opacity:1;}}
+.play-btn{display:inline-flex;align-items:center;gap:7px;padding:7px 16px;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--text2);font-family:'Space Grotesk',sans-serif;font-size:.82rem;cursor:pointer;transition:all .2s;}
+.play-btn:hover{border-color:var(--purple2);color:var(--purple3);}
+.play-btn.playing{border-color:var(--cyan);color:var(--cyan2);}
+
+/* Dialect grid */
+.dialect-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px;}
+@media(max-width:600px){.dialect-grid{grid-template-columns:repeat(2,1fr);}}
+.dialect-btn{padding:10px 14px;border-radius:8px;border:1px solid var(--border2);background:var(--bg4);color:var(--text2);font-family:'Space Grotesk',sans-serif;font-size:.82rem;cursor:pointer;transition:all .2s;text-align:left;}
+.dialect-btn:hover{border-color:var(--orange);color:var(--text);}
+.dialect-btn.active{background:rgba(245,158,11,.12);border-color:var(--orange);color:var(--orange);font-weight:600;}
+
+/* ADAS */
+.adas-frame{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--border2);margin-bottom:16px;user-select:none;}
+.adas-img{width:100%;height:300px;object-fit:cover;display:block;filter:brightness(.7);}
+@media(max-width:600px){.adas-img{height:200px;}}
+.adas-obj{position:absolute;cursor:pointer;}
+.adas-box-inner{position:absolute;inset:0;border:2px dashed rgba(255,255,255,.4);border-radius:4px;transition:all .2s;}
+.adas-obj:hover .adas-box-inner{border-color:var(--cyan);background:rgba(6,182,212,.08);}
+.adas-obj.labeled .adas-box-inner{border:2px solid var(--green);border-style:solid;background:rgba(16,185,129,.12);}
+.adas-tag-lbl{position:absolute;top:-22px;left:0;font-family:'Space Mono',monospace;font-size:.62rem;background:var(--bg);color:var(--text2);padding:2px 7px;border-radius:4px;white-space:nowrap;opacity:0;transition:opacity .2s;}
+.adas-obj:hover .adas-tag-lbl,.adas-obj.labeled .adas-tag-lbl{opacity:1;}
+.adas-obj.labeled .adas-tag-lbl{color:var(--green2);background:rgba(16,185,129,.15);}
+.adas-progress{background:var(--bg4);border:1px solid var(--border2);border-radius:10px;padding:16px;margin-bottom:20px;}
+.adas-stat-row{display:flex;gap:24px;margin-bottom:12px;}
+.adas-stat-item{text-align:center;}
+.adas-val{font-family:'Space Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--purple3);display:block;}
+.adas-lbl{font-size:.7rem;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;}
+.adas-bar-wrap{height:6px;background:var(--border2);border-radius:6px;overflow:hidden;}
+.adas-bar{height:100%;background:linear-gradient(90deg,var(--purple),var(--green));border-radius:6px;width:0%;transition:width .4s ease;}
+
+.demo-result{margin-top:16px;padding:16px 20px;border-radius:10px;font-size:.88rem;display:none;}
+.demo-result.ok{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);color:var(--green2);}
+.demo-result.info{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.25);color:var(--purple3);}
+
+.demo-cta{margin-top:48px;text-align:center;padding:40px;background:linear-gradient(135deg,rgba(124,58,237,.07),rgba(6,182,212,.05));border:1px solid var(--border2);border-radius:16px;}
+.demo-cta p{color:var(--text2);margin-bottom:20px;font-size:1.05rem;}
 </style>
 
 <script>
@@ -1243,6 +1470,94 @@ function initTilt(){
     card.addEventListener('mouseleave',()=>{card.style.transform='';card.style.transition='transform .4s ease';});
   });
 }
+
+/* ── Dark / Light mode toggle ────────────────────────────── */
+(function(){
+  const btn=document.getElementById('themeToggle'),icon=document.getElementById('themeIcon');
+  const saved=localStorage.getItem('theme');
+  if(saved==='light'){document.documentElement.classList.add('light');icon.className='bi bi-moon-fill';}
+  btn.addEventListener('click',()=>{
+    const isLight=document.documentElement.classList.toggle('light');
+    icon.className=isLight?'bi bi-moon-fill':'bi bi-sun-fill';
+    localStorage.setItem('theme',isLight?'light':'dark');
+  });
+})();
+
+/* ── Demo tabs ───────────────────────────────────────────── */
+document.querySelectorAll('.dtab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.dtab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.demo-panel').forEach(p=>p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('dp-'+tab.dataset.tab).classList.add('active');
+  });
+});
+
+/* ── LLM demo ────────────────────────────────────────────── */
+let llmPref=null;
+function selectPref(btn,val){
+  llmPref=val;
+  document.querySelectorAll('.pref-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(val==='A')document.getElementById('resp-a').classList.add('selected');
+  else document.getElementById('resp-a').classList.remove('selected');
+  if(val==='B')document.getElementById('resp-b').classList.add('selected');
+  else document.getElementById('resp-b').classList.remove('selected');
+}
+
+/* ── Arabic demo ─────────────────────────────────────────── */
+let selectedDialect=null;
+function selectDialect(btn){
+  selectedDialect=btn.textContent.trim();
+  document.querySelectorAll('.dialect-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+let playing=false,playInterval=null;
+function togglePlay(){
+  playing=!playing;
+  const wf=document.getElementById('waveform'),icon=document.getElementById('playIcon'),pbtn=document.getElementById('playBtn');
+  if(playing){
+    wf.classList.add('playing');icon.className='bi bi-pause-fill';pbtn.classList.add('playing');pbtn.innerHTML='<i class="bi bi-pause-fill" id="playIcon"></i> Pause';
+    playInterval=setTimeout(()=>{playing=false;wf.classList.remove('playing');pbtn.classList.remove('playing');pbtn.innerHTML='<i class="bi bi-play-fill" id="playIcon"></i> Play sample';},5000);
+  } else {
+    clearTimeout(playInterval);wf.classList.remove('playing');pbtn.classList.remove('playing');pbtn.innerHTML='<i class="bi bi-play-fill" id="playIcon"></i> Play sample';
+  }
+}
+
+/* ── ADAS demo ───────────────────────────────────────────── */
+let labeledCount=0;
+function labelObj(el){
+  if(el.classList.contains('labeled'))return;
+  el.classList.remove('unlabeled');el.classList.add('labeled');
+  labeledCount++;
+  document.getElementById('labeled-count').textContent=labeledCount;
+  const pct=Math.round((labeledCount/4)*100);
+  document.getElementById('adas-pct').textContent=pct+'%';
+  document.getElementById('adasBar').style.width=pct+'%';
+}
+
+/* ── Submit demo ─────────────────────────────────────────── */
+function submitDemo(type){
+  const msgs={
+    llm:{ok:'✓ Annotation submitted! Preference: '+(llmPref||'not selected')+' · Quality: '+document.getElementById('llmQuality').value+'/5 · Ref: SYN-DEMO-'+Math.floor(Math.random()*9999),warn:'Please select a preferred response before submitting.'},
+    arabic:{ok:'✓ Dialect classified as: '+(selectedDialect||'—')+' · Quality: '+document.getElementById('arQuality').value+'/5 · Ref: SYN-DEMO-'+Math.floor(Math.random()*9999),warn:'Please select a dialect before submitting.'},
+    adas:{ok:'✓ Frame annotated: '+labeledCount+'/4 objects labeled ('+Math.round((labeledCount/4)*100)+'%) · Ref: SYN-DEMO-'+Math.floor(Math.random()*9999),warn:'Label at least one object before submitting.'}
+  };
+  const res=document.getElementById(type+'-result');
+  const valid=(type==='llm'&&llmPref)||(type==='arabic'&&selectedDialect)||(type==='adas'&&labeledCount>0);
+  res.style.display='block';
+  res.className='demo-result '+(valid?'ok':'info');
+  res.textContent=valid?msgs[type].ok:msgs[type].warn;
+  if(valid)res.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+/* ── Build waveform bars ─────────────────────────────────── */
+(function(){
+  const wf=document.getElementById('waveform');
+  if(!wf)return;
+  const heights=[20,35,50,28,60,42,30,55,38,45,25,58,40,32,48,22,52,36,44,27,56,33,47,29,61,39,43,26,54,37];
+  heights.forEach(h=>{const b=document.createElement('div');b.className='bar';b.style.height=h+'%';wf.appendChild(b);});
+})();
 
 /* ── Circular progress rings ─────────────────────────────── */
 function animRings(){
