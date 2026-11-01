@@ -38,6 +38,15 @@ html.light .moat{background:linear-gradient(135deg,rgba(245,158,11,.04),rgba(124
 html.light .thesis{background:linear-gradient(135deg,rgba(245,158,11,.04),rgba(124,58,237,.04));border-color:rgba(245,158,11,.18);}
 html.light .marquee-wrap::before{background:linear-gradient(90deg,var(--bg2),transparent);}
 html.light .marquee-wrap::after{background:linear-gradient(270deg,var(--bg2),transparent);}
+/* ── Usability: real cursor on text fields, focus rings, reduced motion ── */
+input,textarea{cursor:text!important;}
+select,label[for]{cursor:pointer!important;}
+:focus-visible{outline:2px solid var(--cyan,#06B6D4);outline-offset:3px;}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important;}
+  #cursor{display:none!important;} body,.btn,.theme-toggle,.hamburger,.magnetic{cursor:auto!important;}
+  #hero-canvas{display:none;}
+}
 /* ── Mobile — hide cursor & heavy effects ──────────────────── */
 @media(pointer:coarse){
   #cursor,#cursorDot{display:none!important;}
@@ -783,23 +792,24 @@ nav.sc{background:rgba(6,6,14,.88);backdrop-filter:blur(18px);-webkit-backdrop-f
     <h2 class="st">Start a <span class="grad">project</span></h2>
     <p class="ss" style="margin:0 auto 0;">We respond within 24 hours with a scoped proposal.</p>
     <div class="cf-wrap">
-      <div class="fok" id="fok"><i class="bi bi-check-circle-fill" style="font-size:2rem;display:block;margin-bottom:10px;"></i><span id="fok-ref"></span><br>We'll be in touch within 24 hours.</div>
-      <div class="ferr" id="ferr"></div>
+      <div class="fok" id="fok" role="status" aria-live="polite"><i class="bi bi-check-circle-fill" style="font-size:2rem;display:block;margin-bottom:10px;"></i><span id="fok-ref"></span><br>We'll be in touch within 24 hours.</div>
+      <div class="ferr" id="ferr" role="alert"></div>
       <form id="cf" novalidate>
+        <div style="position:absolute;left:-9999px;" aria-hidden="true"><label for="f-website">Website</label><input type="text" id="f-website" name="website" tabindex="-1" autocomplete="off"></div>
         <div class="form-row">
-          <div class="ff2"><label>Full name *</label><input type="text" id="f-name" placeholder="Jane Smith" required></div>
-          <div class="ff2"><label>Work email *</label><input type="email" id="f-email" placeholder="jane@company.com" required></div>
+          <div class="ff2"><label for="f-name">Full name *</label><input type="text" id="f-name" name="name" autocomplete="name" maxlength="100" placeholder="Jane Smith" required></div>
+          <div class="ff2"><label for="f-email">Work email *</label><input type="email" id="f-email" name="email" autocomplete="email" maxlength="254" placeholder="jane@company.com" required></div>
         </div>
         <div class="form-row">
-          <div class="ff2"><label>Company</label><input type="text" id="f-co" placeholder="Acme AI"></div>
-          <div class="ff2"><label>Budget range</label>
+          <div class="ff2"><label for="f-co">Company</label><input type="text" id="f-co" name="company" autocomplete="organization" maxlength="120" placeholder="Acme AI"></div>
+          <div class="ff2"><label for="f-budget">Budget range</label>
             <select id="f-budget">
               <option value="">Select range</option>
               <option>Under $5K</option><option>$5K–$20K</option><option>$20K–$50K</option><option>$50K–$100K</option><option>$100K+</option>
             </select>
           </div>
         </div>
-        <div class="ff2"><label>Area of interest *</label>
+        <div class="ff2"><label for="f-interest">Area of interest *</label>
           <select id="f-interest" required>
             <option value="" disabled selected>Select a service</option>
             <option>LLM Evaluation</option><option>Text &amp; Code Annotation</option><option>Autonomous Driving</option>
@@ -811,7 +821,7 @@ nav.sc{background:rgba(6,6,14,.88);backdrop-filter:blur(18px);-webkit-backdrop-f
             <option>Data Licensing</option><option>Strategic Investment</option>
           </select>
         </div>
-        <div class="ff2"><label>Message *</label><textarea id="f-msg" placeholder="Describe your project: data type, volume, timeline, and any dialect or domain requirements." required></textarea></div>
+        <div class="ff2"><label for="f-msg">Message *</label><textarea id="f-msg" name="message" maxlength="5000" placeholder="Describe your project: data type, volume, timeline, and any dialect or domain requirements." required></textarea></div>
         <button type="submit" class="btn btn-p fsub magnetic" id="submitBtn">
           <i class="bi bi-send-fill"></i> <span id="submitTxt">Send message</span>
         </button>
@@ -970,15 +980,19 @@ document.getElementById('cf').addEventListener('submit',async function(e){
     company:document.getElementById('f-co').value.trim(),
     interest:document.getElementById('f-interest').value,
     budget:document.getElementById('f-budget').value,
-    message:document.getElementById('f-msg').value.trim()
+    message:document.getElementById('f-msg').value.trim(),
+    website:document.getElementById('f-website').value
   };
   if(!body.name||!body.email||!body.interest||!body.message){
     ferr.textContent='Please fill in all required fields.';ferr.style.display='block';return;
   }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(body.email)){
+    ferr.textContent='Please enter a valid email address.';ferr.style.display='block';return;
+  }
   txt.textContent='Sending…';btn.disabled=true;
   try{
     const res=await fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    const data=await res.json();
+    const data=await res.json().catch(()=>({success:false,error:'Server error ('+res.status+').'}));
     if(data.success){
       this.style.display='none';
       document.getElementById('fok-ref').textContent='Ref: '+data.ref;
