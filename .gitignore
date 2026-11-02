@@ -1,3 +1,5 @@
 .env
 node_modules/
 leads.json
+leads.json.tmp
+.DS_Store
